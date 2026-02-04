@@ -1,4 +1,4 @@
-import type { Study } from '../types/study';
+import type { Study, StudyStatus } from '../types/study';
 
 interface StudyListProps {
   /** Studies to display. Task 1: wire this from API with loading/error states. */
@@ -11,6 +11,8 @@ interface StudyListProps {
   sortBy?: 'title' | 'createdAt' | 'status';
 }
 
+const STATUS_ORDER: StudyStatus[] = ['draft', 'active', 'completed'];
+
 /**
  * Task 1: Display the list of studies.
  * - Show loading and error states when data is fetched from API.
@@ -19,19 +21,35 @@ interface StudyListProps {
  * Task 3: Add client-side filtering by status and/or sorting (e.g. by title or date).
  */
 export function StudyList({ studies, onEdit, statusFilter, sortBy }: StudyListProps) {
-  // TODO Task 1 & 3: implement loading/error handling in parent, filtering/sorting here or in parent
+  const isFiltered = Boolean(statusFilter);
+  const filtered = isFiltered ? studies.filter((study) => study.status === statusFilter) : studies;
+
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sortBy) {
+      case 'createdAt':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case 'status':
+        return STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status);
+      case 'title':
+      default:
+        return a.title.localeCompare(b.title);
+    }
+  });
+
   return (
     <section aria-label="Research studies list">
-      <h2>Studies</h2>
-      {studies.length === 0 ? (
-        <p>No studies to show.</p>
+      {sorted.length === 0 ? (
+        <p>{isFiltered ? 'No studies match the selected status.' : 'No studies to show.'}</p>
       ) : (
-        <ul>
-          {studies.map((s) => (
-            <li key={s.id}>
-              <strong>{s.title}</strong> — {s.status} · {s.phase} · {new Date(s.createdAt).toLocaleDateString()}
+        <ul className="study-list">
+          {sorted.map((study) => (
+            <li key={study.id} className="study-item">
+              <div className="study-details">
+                <strong>{study.title}</strong> - {study.status} - {study.phase} -{' '}
+                {new Date(study.createdAt).toLocaleDateString()}
+              </div>
               {onEdit && (
-                <button type="button" onClick={() => onEdit(s)}>
+                <button type="button" className="link-button" onClick={() => onEdit(study)}>
                   Edit
                 </button>
               )}

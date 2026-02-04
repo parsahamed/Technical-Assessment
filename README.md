@@ -37,3 +37,19 @@ Revalia/
 ## Time limit
 
 Roughly **4–5 hours**. Focus on Task 1 (list + loading/error) and Task 2 (form + validation) first; Task 3 (filter/sort) can be simplified if needed.
+
+## Candidate notes
+
+What I did:
+- Wired the study list to the API with loading and error states, plus retry.
+- Implemented create/edit with validation, error display, and basic focus management.
+- Added client-side filter + sort and a clearer empty state.
+
+Trade-offs and assumptions:
+- Kept styling minimal and dependency-free to stay within scope.
+- Chose a single created-at sort (newest first) for simplicity.
+
+If I had more time:
+- Add tests for list filtering/sorting and form validation.
+- Improve layout and spacing with a light design pass.
+- Add keyboard navigation refinements and richer empty states.
